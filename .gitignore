@@ -42,3 +42,13 @@ tcl/sharedir.tcl
 tcscid
 tkscid
 
+web/api/.venv/
+__pycache__/
+*.pyc
+
+data/*.si4
+data/*.si3
+data/*.sg4
+data/*.sn4
+data/*.sg3
+data/*.sn3
