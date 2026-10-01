@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Opening Explorer - Scid Web</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css?v=3"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/static/openings.css?v=1"
+    >
+</head>
+
+
+<body>
+
+    <main class="openings-page">
+
+        <header class="openings-page-header">
+
+            <div>
+                <h1>Opening Explorer</h1>
+
+                <div
+                    id="openingName"
+                    class="openings-name"
+                >
+                    Starting position
+                </div>
+
+                <div
+                    id="openingLine"
+                    class="openings-line"
+                >
+                    Starting position
+                </div>
+            </div>
+
+
+            <div class="openings-actions">
+
+                <label for="databaseSelect">
+                    Database
+                </label>
+
+                <select id="databaseSelect">
+                    <option value="">
+                        Loading databases...
+                    </option>
+                </select>
+
+                <button
+                    id="openingBack"
+                    type="button"
+                    disabled
+                >
+                    ← Back
+                </button>
+
+                <button
+                    id="openingReset"
+                    type="button"
+                >
+                    Reset
+                </button>
+
+                <button
+                    id="openingRefresh"
+                    type="button"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <section class="openings-layout">
+
+
+            <!-- =========================================================
+                 Chessboard
+                 ========================================================= -->
+
+            <section class="openings-board-panel">
+
+                <div
+                    id="chessboard"
+                    class="chessboard"
+                    aria-label="Interactive chessboard"
+                ></div>
+
+                <div
+                    id="boardStatus"
+                    class="board-status"
+                >
+                    White to move
+                </div>
+
+                <div class="board-help">
+                    Click a piece, then click where you want to move it.
+                </div>
+
+            </section>
+
+
+            <!-- =========================================================
+                 Opening information
+                 ========================================================= -->
+
+            <section class="openings-explorer-panel">
+
+                <section class="opening-matches-panel">
+
+                    <h2>Opening</h2>
+
+                    <div
+                        id="openingMatches"
+                        class="opening-matches"
+                    ></div>
+
+                </section>
+
+
+                <section class="openings-content">
+
+                    <h2>Database Explorer</h2>
+
+                    <div
+                        id="openingTree"
+                        class="openings-tree"
+                    >
+                        <div class="opening-loading">
+                            Loading opening explorer...
+                        </div>
+                    </div>
+
+                </section>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="/static/openings.js?v=3"
+    ></script>
+
+</body>
+
+</html>

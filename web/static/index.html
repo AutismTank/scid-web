@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Scid Web</title>
+
+<link rel="stylesheet" href="/static/style.css?v=5">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div class="brand">
+    <span class="brand-icon">♟</span>
+    <span>Scid Web</span>
+</div>
+
+<div class="database-selector">
+
+    <label for="databaseSelect">
+        Database
+    </label>
+
+    <select id="databaseSelect"></select>
+
+</div>
+
+  <a
+      class="opening-explorer-link"
+      href="/openings"
+  >
+      ♟ Opening Explorer
+  </a>
+
+</header>
+
+<main class="container">
+
+<!-- ================================================================
+     Database / games
+     ================================================================ -->
+
+<section id="gamesSection" class="panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h1>Games</h1>
+
+            <p id="gameCount">
+                Loading games…
+            </p>
+
+        </div>
+
+
+        <input
+            id="gameSearch"
+            type="search"
+            placeholder="Search games…"
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table class="games-table">
+
+            <thead>
+
+                <tr>
+                    <th>#</th>
+                    <th>White</th>
+                    <th>Black</th>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Result</th>
+                    <th>ECO</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody id="gamesTableBody"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ============================================================
+         Database pagination
+         ============================================================ -->
+
+    <div class="pagination">
+
+        <button
+            id="previousPage"
+            type="button"
+            title="Previous page"
+        >
+            ← Previous
+        </button>
+
+
+        <span id="pageInfo">
+            Page 1 of 1
+        </span>
+
+
+        <button
+            id="nextPage"
+            type="button"
+            title="Next page"
+        >
+            Next →
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================================
+     Game viewer
+     ================================================================ -->
+
+<section
+    id="gameSection"
+    class="game-section hidden"
+>
+
+    <button
+        id="backButton"
+        class="back-button"
+        type="button"
+    >
+        ← Back to games
+    </button>
+
+    <button id="shareGame" type="button">
+    🔗 Copy link
+    </button>
+
+    <div class="game-header">
+
+        <div>
+
+            <h1 id="gameTitle">
+                Game
+            </h1>
+
+            <div class="game-subtitle">
+
+                <span id="gameEvent"></span>
+
+                <span>·</span>
+
+                <span id="gameSite"></span>
+
+                <span>·</span>
+
+                <span id="gameDate"></span>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="gameResult"
+            class="game-result"
+        ></div>
+
+    </div>
+
+
+    <div class="viewer">
+
+
+        <!-- ========================================================
+             Chessboard
+             ======================================================== -->
+
+        <div class="board-container">
+
+            <div class="board-with-coordinates">
+
+                <div class="rank-labels">
+
+                    <span>8</span>
+                    <span>7</span>
+                    <span>6</span>
+                    <span>5</span>
+                    <span>4</span>
+                    <span>3</span>
+                    <span>2</span>
+                    <span>1</span>
+
+                </div>
+
+
+                <div
+                    id="chessboard"
+                    class="chessboard"
+                ></div>
+
+            </div>
+
+
+            <div class="file-labels">
+
+                <span>a</span>
+                <span>b</span>
+                <span>c</span>
+                <span>d</span>
+                <span>e</span>
+                <span>f</span>
+                <span>g</span>
+                <span>h</span>
+
+            </div>
+
+
+            <div class="board-controls">
+
+                <button
+                    id="firstMove"
+                    type="button"
+                    title="First position"
+                >
+                    ⏮
+                </button>
+
+
+                <button
+                    id="previousMove"
+                    type="button"
+                    title="Previous move"
+                >
+                    ◀
+                </button>
+
+
+                <span id="moveCounter">
+                    0 / 0
+                </span>
+
+
+                <button
+                    id="nextMove"
+                    type="button"
+                    title="Next move"
+                >
+                    ▶
+                </button>
+
+
+                <button
+                    id="lastMove"
+                    type="button"
+                    title="Last position"
+                >
+                    ⏭
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             Game information / moves
+             ======================================================== -->
+
+        <aside class="game-panel">
+
+
+            <div class="players">
+
+
+                <div class="player white-player">
+
+                    <span class="player-piece">
+                        ♔
+                    </span>
+
+                    <div>
+
+                        <div class="player-label">
+                            White
+                        </div>
+
+                        <div
+                            id="whitePlayer"
+                            class="player-name"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="player black-player">
+
+                    <span class="player-piece">
+                        ♚
+                    </span>
+
+                    <div>
+
+                        <div class="player-label">
+                            Black
+                        </div>
+
+                        <div
+                            id="blackPlayer"
+                            class="player-name"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                id="analysisPanel"
+                class="analysis-panel"
+            >
+
+                <div class="analysis-header">
+                    Stockfish
+                </div>
+
+                <div
+                    id="analysisStatus"
+                    class="analysis-status"
+                >
+                    Waiting for analysis…
+                </div>
+
+                <div class="analysis-main">
+
+                    <div
+                        id="analysisEvaluation"
+                        class="analysis-evaluation"
+                    >
+                        —
+                    </div>
+
+                    <div class="analysis-details">
+
+                        <div class="analysis-label">
+                            Best move
+                        </div>
+
+                        <div
+                            id="analysisBestMove"
+                            class="analysis-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="analysis-pv">
+
+                    <div class="analysis-label">
+                        Principal variation
+                    </div>
+
+                    <div
+                        id="analysisPv"
+                        class="analysis-value analysis-pv-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="moves-container">
+
+                <div class="moves-header">
+                    Moves
+                </div>
+
+                <div
+                    id="movesList"
+                    class="moves-list"
+                ></div>
+
+            </div>
+
+
+
+
+
+        </aside>
+
+
+    </div>
+
+</section>
+
+
+<!-- ================================================================
+     Error
+     ================================================================ -->
+
+<div
+    id="error"
+    class="error hidden"
+></div>
+
+</main>
+
+<script type="module" src="/static/app.js?v=12"></script>
+
+<div class="kofi-footer">
+    <a
+        href="https://ko-fi.com/scidweb"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="kofi-button"
+    >
+        ☕ Support SCID Web
+    </a>
+</div>
+
+</body>
+</html>

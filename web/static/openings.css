@@ -1,0 +1,579 @@
+/* =========================================================================
+   Opening Explorer page
+   ========================================================================= */
+
+.openings-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+
+.openings-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+
+.openings-page-header h1 {
+    margin: 0 0 6px 0;
+}
+
+
+.openings-name {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+
+.openings-line {
+    margin-top: 4px;
+    color: #777;
+    font-family: monospace;
+    font-size: 15px;
+}
+
+
+.openings-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+
+.openings-actions label {
+    font-size: 14px;
+    color: #666;
+}
+
+
+.openings-actions select,
+.openings-actions button {
+    font: inherit;
+    padding: 8px 11px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+}
+
+
+.openings-actions button {
+    cursor: pointer;
+}
+
+
+.openings-actions button:hover:not(:disabled) {
+    background: #f3f3f3;
+}
+
+
+.openings-actions button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+
+/* =========================================================================
+   Main two-column layout
+   ========================================================================= */
+
+.openings-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 560px) minmax(360px, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+
+.openings-board-panel {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================================
+   Chessboard
+
+   IMPORTANT:
+   These selectors intentionally use #chessboard so they override the
+   existing game viewer's .chessboard rules.
+   ========================================================================= */
+
+#chessboard {
+    width: min(100%, 560px);
+    max-width: 560px;
+    aspect-ratio: 1 / 1;
+
+    display: grid !important;
+    grid-template-columns: repeat(8, 1fr) !important;
+    grid-template-rows: repeat(8, 1fr) !important;
+
+    border: 3px solid #222;
+    box-sizing: border-box;
+
+    overflow: hidden;
+    margin: 0 auto;
+
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+
+#chessboard .chess-square {
+    position: relative;
+
+    width: auto !important;
+    height: auto !important;
+
+    min-width: 0;
+    min-height: 0;
+
+    border: 0;
+    border-radius: 0;
+
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    font-family:
+        "DejaVu Sans",
+        "Segoe UI Symbol",
+        "Noto Sans Symbols",
+        serif;
+}
+
+
+#chessboard .chess-square.light {
+    background: #f0d9b5 !important;
+}
+
+
+#chessboard .chess-square.dark {
+    background: #b58863 !important;
+}
+
+
+#chessboard .chess-square:hover {
+    filter: brightness(1.08);
+}
+
+
+#chessboard .chess-square.selected {
+    box-shadow: inset 0 0 0 4px rgba(255, 215, 0, 0.95);
+}
+
+
+/* Legal destination dot */
+
+#chessboard .chess-square.legal-target::after {
+    content: "";
+
+    position: absolute;
+
+    width: 22%;
+    height: 22%;
+
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.28);
+}
+
+
+/* Legal capture ring */
+
+#chessboard .chess-square.legal-target:has(.chess-piece)::after {
+    width: 76%;
+    height: 76%;
+
+    background: transparent;
+
+    border: 4px solid rgba(0, 0, 0, 0.30);
+
+    box-sizing: border-box;
+}
+
+
+#chessboard .chess-piece {
+    position: relative;
+    z-index: 2;
+
+    display: block;
+
+    font-size: clamp(30px, 6vw, 54px);
+    line-height: 1;
+
+    user-select: none;
+    pointer-events: none;
+
+    font-family:
+        "DejaVu Sans",
+        "Segoe UI Symbol",
+        "Noto Sans Symbols",
+        serif;
+}
+
+
+#chessboard .chess-piece.white {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+}
+
+
+#chessboard .chess-piece.black {
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+
+/* Board coordinates */
+
+#chessboard .board-coordinate {
+    position: absolute;
+    z-index: 3;
+
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+
+#chessboard .rank-coordinate {
+    top: 4px;
+    left: 4px;
+}
+
+
+#chessboard .file-coordinate {
+    right: 4px;
+    bottom: 4px;
+}
+
+
+#chessboard .chess-square.light .board-coordinate {
+    color: #b58863;
+}
+
+
+#chessboard .chess-square.dark .board-coordinate {
+    color: #f0d9b5;
+}
+
+
+/* =========================================================================
+   Board information
+   ========================================================================= */
+
+.board-status {
+    margin-top: 12px;
+
+    text-align: center;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+.board-help {
+    margin-top: 5px;
+
+    text-align: center;
+
+    font-size: 13px;
+    color: #777;
+}
+
+
+/* =========================================================================
+   Opening information
+   ========================================================================= */
+
+.openings-explorer-panel {
+    min-width: 0;
+}
+
+
+.opening-matches-panel,
+.openings-content {
+    margin-bottom: 24px;
+}
+
+
+.opening-matches-panel h2,
+.openings-content h2 {
+    margin: 0 0 10px 0;
+}
+
+
+.opening-matches {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+.opening-match-current {
+    padding: 12px 14px;
+
+    margin-bottom: 8px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background: #f7f7f7;
+}
+
+
+.opening-match-current strong {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 18px;
+}
+
+
+.opening-match-label {
+    display: block;
+
+    font-size: 11px;
+    color: #777;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+
+.opening-match-heading {
+    margin: 6px 0;
+
+    font-size: 13px;
+    font-weight: 700;
+    color: #666;
+}
+
+
+.opening-match {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: 65px 1fr;
+
+    gap: 10px;
+
+    align-items: center;
+
+    padding: 9px 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 7px;
+
+    background: white;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    font: inherit;
+}
+
+
+.opening-match:hover {
+    background: #f5f5f5;
+}
+
+
+.opening-match-move {
+    font-family: monospace;
+    font-weight: 700;
+}
+
+
+.opening-match-name {
+    font-weight: 600;
+}
+
+
+.opening-match-empty {
+    padding: 10px 0;
+
+    color: #777;
+}
+
+
+/* =========================================================================
+   Database tree
+   ========================================================================= */
+
+.openings-tree-header {
+    display: grid;
+
+    grid-template-columns:
+        minmax(70px, 100px)
+        1fr
+        100px
+        100px;
+
+    gap: 10px;
+
+    padding: 7px 12px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #777;
+
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+
+.openings-tree-header span:not(:first-child) {
+    text-align: right;
+}
+
+
+.opening-move {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(70px, 100px)
+        1fr
+        100px
+        100px;
+
+    gap: 10px;
+
+    align-items: center;
+
+    padding: 10px 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 7px;
+
+    margin-bottom: 5px;
+
+    background: white;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    font: inherit;
+}
+
+
+.opening-move:hover {
+    background: #f5f5f5;
+}
+
+
+.opening-move-name {
+    font-family: monospace;
+    font-weight: 700;
+}
+
+
+.opening-move-games,
+.opening-move-frequency,
+.opening-move-score {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+
+.opening-loading,
+.opening-empty,
+.opening-error {
+    padding: 20px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    color: #777;
+
+    background: #fafafa;
+}
+
+
+.opening-error {
+    color: #a00;
+}
+
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+
+@media (max-width: 900px) {
+
+    .openings-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .openings-board-panel {
+        max-width: 560px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .openings-page {
+        padding: 14px;
+    }
+
+
+    .openings-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .openings-actions {
+        justify-content: flex-start;
+    }
+
+
+    .openings-actions select {
+        min-width: 0;
+        flex: 1;
+    }
+
+
+    #chessboard {
+        width: min(100%, 500px);
+    }
+
+
+    #chessboard .chess-piece {
+        font-size: clamp(24px, 10vw, 48px);
+    }
+
+
+    .opening-move,
+    .openings-tree-header {
+        grid-template-columns:
+            60px
+            1fr
+            70px
+            70px;
+
+        gap: 6px;
+    }
+
+}

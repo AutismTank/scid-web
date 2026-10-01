@@ -1,0 +1,526 @@
+##### Makefile for Scid for Unix operating systems.
+
+CXX = g++
+CC = gcc
+LINK = $(CXX)
+BASH_ENV = 
+
+# BINDIR: where the Scid programs are copied for "make install".
+# (DESTDIR allows packagers to do fake installs)
+
+BINDIR = $(DESTDIR)/usr/local/bin
+
+SHAREDIR = $(DESTDIR)/usr/local/share/scid
+
+FONTDIR = $(DESTDIR)/usr/share/fonts/truetype/Scid
+
+### TCL_VERSION: Set this according to the version of Tcl/Tk you have
+#   installed that you want Scid to use: 8.5 / 8.6 / ...
+
+TCL_VERSION = 8.6
+
+# TCL_INCLUDE, TCL_LIBRARY, TK_LIBRARY: these are the compiler options
+#    needed for linking Scid with Tcl/Tk.  The program "./configure"
+#    will try to determine them automatically, but if it cannot, you
+#    can use the examples below for help in setting these variables.
+#
+# The settings determined by "./configure" are:
+
+TCL_INCLUDE = -I/usr/include/tcl8.6
+TCL_LIBRARY = -L/usr/lib/x86_64-linux-gnu -ltcl$(TCL_VERSION)
+TK_LIBRARY  = $(TCL_LIBRARY) -ltk$(TCL_VERSION) -lX11
+
+CQL_INCLUDE = -Isrc/cql -Isrc
+
+### Nalimov tablebases
+# TB =                   for no tablebase support
+# TB = -DSCID_USE_TB     for tablebase support
+# TB = -DSCID_USE_TB -DT41_INCLUDE
+
+TB = -DSCID_USE_TB -DT41_INCLUDE
+
+### SCIDFLAGS: Scid customization flags.
+
+SCIDFLAGS = 
+OBJS= $(SCIDOBJS)
+ZLIB = -lz
+
+### To use inbuilt ZLIB, uncomment below
+### but some systems may automatically add "-lz" at some stage if system libz is present ?
+# SCIDFLAGS = -DZLIB
+# OBJS= $(SCIDOBJS) $(ZLIBOBJS)
+# ZLIB =
+
+### DEBUG: Defining the macro ASSERTIONS will turn on assertions, which
+#       helps to track bugs after modifications, but the programs will run 
+#       a little faster with assertions turned off.
+
+DEBUG = #-DASSERTIONS -g
+
+WARNINGS = -Wall
+
+CFLAGS = -O2 -fno-exceptions $(WARNINGS) $(DEBUG)
+
+CXXFLAGS =  $(CFLAGS) $(SCIDFLAGS)
+
+LDFLAGS = 
+
+### LANGUAGES: List of additional Tcl files to include in Scid for
+#       multi-language menu support.
+#       By default, it is all the contributed languages, but you
+#       can reduce the size of the Scid program by only specifying
+#       the languages you want supported.
+
+LANGUAGES = tcl/lang/czech.tcl tcl/lang/deutsch.tcl tcl/lang/finnish.tcl tcl/lang/francais.tcl tcl/lang/greek.tcl tcl/lang/hungary.tcl tcl/lang/italian.tcl tcl/lang/norsk.tcl tcl/lang/polish.tcl tcl/lang/portbr.tcl tcl/lang/port.tcl tcl/lang/russian.tcl tcl/lang/nederlan.tcl tcl/lang/spanish.tcl tcl/lang/serbian.tcl tcl/lang/swedish.tcl tcl/lang/turkish.tcl
+
+
+############################################################
+#
+# You should not need to edit anything below this line.
+#
+############################################################
+
+### EXECS: executable programs compiled from C++ files.
+#     Note: scidt and eco2epd are obsolete and not compiled by default.
+#			PG : put back scidt has it appears to be useful in certain cases
+
+EXECS= pgnscid tkscid tcscid scmerge scidlet scidt
+
+### SCIDOBJS: not all the .o files that make up Scid, just the standard ones 
+#     that most of the programs include.
+
+SCIDOBJS= src/misc.o src/index.o src/date.o src/namebase.o src/position.o \
+      src/game.o src/gfile.o src/matsig.o src/bytebuf.o src/textbuf.o \
+      src/myassert.o src/stralloc.o src/mfile.o src/dstring.o src/pgnparse.o \
+      src/stored.o src/movelist.o \
+      src/polyglot/attack.o src/polyglot/board.o src/polyglot/book.o \
+      src/polyglot/book_make.o src/polyglot/book_merge.o src/polyglot/colour.o \
+      src/polyglot/fen.o src/polyglot/game.o src/polyglot/hash.o \
+      src/polyglot/io.o src/polyglot/line.o src/polyglot/list.o src/polyglot/main.o src/polyglot/move.o \
+      src/polyglot/move_do.o src/polyglot/move_gen.o src/polyglot/move_legal.o src/polyglot/option.o \
+      src/polyglot/parse.o src/polyglot/pgn.o src/polyglot/piece.o src/polyglot/random.o \
+      src/polyglot/san.o src/polyglot/search.o src/polyglot/square.o src/polyglot/util.o
+
+CHARSETCONVOBJS= src/charsetdetector.o src/charsetconverter.o \
+      src/universalchardet/CharDistribution.o src/universalchardet/JpCntx.o \
+      src/universalchardet/LangBulgarianModel.o src/universalchardet/LangCyrillicModel.o \
+      src/universalchardet/LangGreekModel.o src/universalchardet/LangHebrewModel.o \
+      src/universalchardet/LangHungarianModel.o src/universalchardet/LangThaiModel.o \
+      src/universalchardet/nsBig5Prober.o src/universalchardet/nsCharSetProber.o \
+      src/universalchardet/nsEscCharsetProber.o src/universalchardet/nsEscSM.o \
+      src/universalchardet/nsEUCJPProber.o src/universalchardet/nsEUCKRProber.o \
+      src/universalchardet/nsEUCTWProber.o src/universalchardet/nsGB2312Prober.o \
+      src/universalchardet/nsHebrewProber.o src/universalchardet/nsLatin1Prober.o \
+      src/universalchardet/nsMBCSGroupProber.o src/universalchardet/nsMBCSSM.o \
+      src/universalchardet/nsSBCharSetProber.o src/universalchardet/nsSBCSGroupProber.o \
+      src/universalchardet/nsSJISProber.o src/universalchardet/nsUniversalDetector.o \
+      src/universalchardet/nsUTF8Prober.o
+
+# Integrated CQL objects.
+CQLOBJS_I=  \
+  src/cql/i_countsquaresnode.o src/cql/i_cqlassert.o \
+  src/cql/i_cqlexit.o src/cql/i_cqlglobals.o src/cql/i_linearize.o \
+  src/cql/i_deleteable.o src/cql/i_repeatconstituent.o src/cql/i_sequencenest.o \
+  src/cql/i_assignnode.o src/cql/i_attacknode.o src/cql/i_beginvariationnode.o \
+  src/cql/i_betweennode.o src/cql/i_chesstypes.o src/cql/i_clone.o \
+  src/cql/i_colortransform.o src/cql/i_commentbase.o src/cql/i_composetransform.o \
+  src/cql/i_cqlinitialize.o \
+  src/cql/i_cqlnodematch.o src/cql/i_cqlnode.o \
+  src/cql/i_dihedraltransform.o src/cql/i_directionmatch.o src/cql/i_direction.o \
+  src/cql/i_directionparameter.o src/cql/i_echodistancespec.o src/cql/i_echolcaspec.o \
+  src/cql/i_echolongestsubstringspec.o src/cql/i_echomatchinfo.o src/cql/i_echonode.o \
+  src/cql/i_echoparse.o src/cql/i_echosidetomovespec.o src/cql/i_echospec.o \
+  src/cql/i_echosquarespec.o src/cql/i_echosquarespec-transform.o src/cql/i_echotransformspec.o \
+  src/cql/i_elonode.o src/cql/i_eventnode.o src/cql/i_existsnode.o \
+  src/cql/i_extensionnode.o src/cql/i_filename.o src/cql/i_forallnode.o \
+  src/cql/i_futurenode.o src/cql/i_futurestarnode.o src/cql/i_gamesortinfo.o \
+  src/cql/i_holderconstituent.o src/cql/i_keywords.o src/cql/i_lexer.o \
+  src/cql/i_longestcommonsubstring.o src/cql/i_markboardmap.o src/cql/i_markboard.o \
+  src/cql/i_markboardstatic.o src/cql/i_matchcommentnode.o src/cql/i_matchcountnode.o \
+  src/cql/i_match.o src/cql/i_movebase.o src/cql/i_movenumbernode.o \
+  src/cql/i_nodematch.o src/cql/i_node.o src/cql/i_nodetransform.o \
+  src/cql/i_notnode.o src/cql/i_numericvariable.o src/cql/i_onnode.o \
+  src/cql/i_optionalconstituent.o src/cql/i_origChanges.o src/cql/i_originnode.o \
+  src/cql/i_ornode.o src/cql/i_parser.o \
+  src/cql/i_pastnode.o src/cql/i_paststarnode.o src/cql/i_pieceidnode.o \
+  src/cql/i_piecelocmatch.o src/cql/i_pieceloc.o src/cql/i_piecelocparse.o \
+  src/cql/i_piover4transform.o src/cql/i_playernode.o src/cql/i_plusconstituent.o \
+  src/cql/i_positionnode.o src/cql/i_powerdifferencenode.o src/cql/i_powernode.o \
+  src/cql/i_raynode.o src/cql/i_seqconstituent.o src/cql/i_seqret.o \
+  src/cql/i_sequencebase.o src/cql/i_sequencematch.o src/cql/i_setbase.o \
+  src/cql/i_shifttransform.o src/cql/i_sitenode.o src/cql/i_sortvalue.o \
+  src/cql/i_squaremask.o src/cql/i_squarevariable.o src/cql/i_starconstituent.o \
+  src/cql/i_tagvariable.o src/cql/i_token.o src/cql/i_tokenstream.o \
+  src/cql/i_transform_members.o src/cql/i_transformnode.o \
+  src/cql/i_transform.o src/cql/i_transform-parse.o \
+  src/cql/i_util.o src/cql/i_variable.o src/cql/i_variations.o \
+  src/cql/i_vectorconstituent.o src/cql/i_vectornode.o src/cql/i_version.o \
+  src/cql/i_yearnode.o
+
+# Standalone CQL objects.
+CQLOBJS_S= src/cql/s_cql.o \
+  src/cql/s_countsquaresnode.o src/cql/s_cqlassert.o \
+  src/cql/s_cqlexit.o src/cql/s_cqlglobals.o src/cql/s_linearize.o \
+  src/cql/s_deleteable.o src/cql/s_repeatconstituent.o src/cql/s_sequencenest.o \
+  src/cql/s_assignnode.o src/cql/s_attacknode.o src/cql/s_beginvariationnode.o \
+  src/cql/s_betweennode.o src/cql/s_chesstypes.o src/cql/s_clone.o \
+  src/cql/s_colortransform.o src/cql/s_commentbase.o src/cql/s_composetransform.o \
+  src/cql/s_cqlinitialize.o \
+  src/cql/s_cqlnodematch.o src/cql/s_cqlnode.o \
+  src/cql/s_dihedraltransform.o src/cql/s_directionmatch.o src/cql/s_direction.o \
+  src/cql/s_directionparameter.o src/cql/s_echodistancespec.o src/cql/s_echolcaspec.o \
+  src/cql/s_echolongestsubstringspec.o src/cql/s_echomatchinfo.o src/cql/s_echonode.o \
+  src/cql/s_echoparse.o src/cql/s_echosidetomovespec.o src/cql/s_echospec.o \
+  src/cql/s_echosquarespec.o src/cql/s_echosquarespec-transform.o src/cql/s_echotransformspec.o \
+  src/cql/s_elonode.o src/cql/s_eventnode.o src/cql/s_existsnode.o \
+  src/cql/s_extensionnode.o src/cql/s_filename.o src/cql/s_forallnode.o \
+  src/cql/s_futurenode.o src/cql/s_futurestarnode.o src/cql/s_gamesortinfo.o \
+  src/cql/s_holderconstituent.o src/cql/s_keywords.o src/cql/s_lexer.o \
+  src/cql/s_longestcommonsubstring.o src/cql/s_markboardmap.o src/cql/s_markboard.o \
+  src/cql/s_markboardstatic.o src/cql/s_matchcommentnode.o src/cql/s_matchcountnode.o \
+  src/cql/s_match.o src/cql/s_movebase.o src/cql/s_movenumbernode.o \
+  src/cql/s_nodematch.o src/cql/s_node.o src/cql/s_nodetransform.o \
+  src/cql/s_notnode.o src/cql/s_numericvariable.o src/cql/s_onnode.o \
+  src/cql/s_optionalconstituent.o src/cql/s_origChanges.o src/cql/s_originnode.o \
+  src/cql/s_ornode.o src/cql/s_parser.o \
+  src/cql/s_pastnode.o src/cql/s_paststarnode.o src/cql/s_pieceidnode.o \
+  src/cql/s_piecelocmatch.o src/cql/s_pieceloc.o src/cql/s_piecelocparse.o \
+  src/cql/s_piover4transform.o src/cql/s_playernode.o src/cql/s_plusconstituent.o \
+  src/cql/s_positionnode.o src/cql/s_powerdifferencenode.o src/cql/s_powernode.o \
+  src/cql/s_raynode.o src/cql/s_seqconstituent.o src/cql/s_seqret.o \
+  src/cql/s_sequencebase.o src/cql/s_sequencematch.o src/cql/s_setbase.o \
+  src/cql/s_shifttransform.o src/cql/s_sitenode.o src/cql/s_sortvalue.o \
+  src/cql/s_squaremask.o src/cql/s_squarevariable.o src/cql/s_starconstituent.o \
+  src/cql/s_tagvariable.o src/cql/s_token.o src/cql/s_tokenstream.o \
+  src/cql/s_transform_members.o src/cql/s_transformnode.o \
+  src/cql/s_transform.o src/cql/s_transform-parse.o \
+  src/cql/s_util.o src/cql/s_variable.o src/cql/s_variations.o \
+  src/cql/s_vectorconstituent.o src/cql/s_vectornode.o src/cql/s_version.o \
+  src/cql/s_yearnode.o \
+  src/bytebuf.o src/crosstab.o src/date.o src/dstring.o \
+  src/filter.o src/game.o src/gfile.o src/index.o src/matsig.o \
+  src/mfile.o src/misc.o src/movelist.o src/myassert.o src/namebase.o \
+  src/optable.o src/pgnparse.o src/pbook.o src/position.o src/probe.o \
+  src/spellchk.o src/stored.o src/stralloc.o src/textbuf.o src/tree.o
+
+
+### ZLIBOBJS: object files in the zlib compression library.
+
+ZLIBOBJS= src/zlib/adler32.o src/zlib/compress.o src/zlib/crc32.o \
+      src/zlib/gzio.o src/zlib/uncompr.o src/zlib/deflate.o src/zlib/trees.o \
+      src/zlib/zutil.o src/zlib/inflate.o src/zlib/infblock.o \
+      src/zlib/inftrees.o src/zlib/infcodes.o src/zlib/infutil.o \
+      src/zlib/inffast.o
+
+### TCLS: all the .tcl files that make up "scid".
+
+TCLS= \
+  tcl/start.tcl \
+  tcl/sharedir.tcl \
+  tcl/config.tcl \
+  tcl/bitmaps.tcl \
+  tcl/language.tcl \
+  tcl/utils.tcl \
+    tcl/utils/date.tcl tcl/utils/font.tcl tcl/utils/graph.tcl tcl/utils/history.tcl \
+    tcl/utils/pane.tcl tcl/utils/sound.tcl tcl/utils/string.tcl tcl/utils/tooltip.tcl \
+    tcl/utils/validate.tcl tcl/utils/win.tcl \
+  tcl/misc/misc.tcl tcl/htext.tcl \
+  tcl/file.tcl \
+    tcl/file/finder.tcl tcl/file/bookmark.tcl tcl/file/recent.tcl tcl/file/epd.tcl \
+    tcl/file/spellchk.tcl tcl/file/maint.tcl \
+  tcl/edit.tcl \
+  tcl/game.tcl \
+    tcl/game/browser.tcl \
+  tcl/windows.tcl \
+    tcl/windows/gamelist.tcl tcl/windows/pgn.tcl tcl/windows/book.tcl \
+    tcl/windows/comment.tcl tcl/windows/eco.tcl \
+    tcl/windows/stats.tcl tcl/windows/tree.tcl tcl/windows/crosstab.tcl \
+    tcl/windows/pfinder.tcl tcl/windows/tourney.tcl tcl/windows/switcher.tcl \
+  tcl/search/search.tcl \
+    tcl/search/board.tcl tcl/search/header.tcl tcl/search/material.tcl \
+  tcl/contrib/ezsmtp/ezsmtp.tcl \
+    tcl/tools/email.tcl \
+    tcl/tools/import.tcl \
+    tcl/tools/optable.tcl tcl/tools/preport.tcl tcl/tools/pinfo.tcl \
+    tcl/tools/analysis.tcl tcl/tools/comp.tcl tcl/tools/wbdetect.tcl \
+    tcl/tools/reper.tcl tcl/tools/graphs.tcl tcl/tools/tablebase.tcl tcl/tools/ptracker.tcl \
+  tcl/help/help.tcl tcl/help/tips.tcl \
+  tcl/menus.tcl tcl/board.tcl tcl/move.tcl tcl/main.tcl tcl/tools/correspondence.tcl \
+    tcl/lang/english.tcl tcl/dnd/tkdnd.tcl tcl/dnd/tkdnd_unix.tcl \
+  tcl/tools/fics.tcl tcl/tools/uci.tcl tcl/end.tcl tcl/tools/tacgame.tcl tcl/tools/sergame.tcl tcl/tools/calvar.tcl tcl/tools/tactics.tcl \
+  tcl/tools/novag.tcl tcl/misc/flags.tcl tcl/tools/inputengine.tcl
+
+
+# There are several scripts in the "scripts" directory, but most are probably not used
+# so just include a couple of them now
+
+SCRIPTS= sc_remote scidpgn 
+
+####################
+
+### Type "make" or "make all" to make all programs:
+
+all: all_scid engines
+
+all_scid: scid $(SCRIPTS) $(EXECS)
+
+engines: phalanx toga
+
+phalanx:
+	$(MAKE) -C engines/phalanx/ -f Makefile CC="$(CC)" LINK="$(LINK)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" 
+
+toga:
+	$(MAKE) -C engines/toga/src -f Makefile CXX="$(CXX)" LINK="$(LINK)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)" 
+
+### To copy all executables to $BINDIR, with read and execute permission 
+#   for all users, and put extra files in $SHAREDIR, type "make install".
+
+install: install_scid install_engines
+
+install_scid: all_scid
+	install -m 755 -d $(SHAREDIR)
+	install -m 755 -d $(BINDIR)
+	install -m 755 -d $(SHAREDIR)/data/
+	install -m 755 scid $(SCRIPTS) $(EXECS) $(BINDIR)
+	install -m 644 -p scid.eco $(SHAREDIR)/data/
+	install -m 644 -p spelling.ssp $(SHAREDIR)
+	install -m 755 -d $(SHAREDIR)/books
+	install -m 666 ./books/* $(SHAREDIR)/books/
+	install -m 755 -d $(SHAREDIR)/bases
+	install -m 666 ./bases/* $(SHAREDIR)/bases/
+	install -m 755 -d $(SHAREDIR)/html
+	cp -r ./html/* $(SHAREDIR)/html/
+	install -m 755 -d $(SHAREDIR)/lang/
+	@if [ "$(LANGUAGES)" != "" ]; then \
+	  cp $(LANGUAGES) $(SHAREDIR)/lang/ ; \
+	fi
+	install -m 755 -d $(SHAREDIR)/bitmaps
+	cp -r ./bitmaps/* $(SHAREDIR)/bitmaps/
+	@if [ "`id -u`" -eq 0 ]; then \
+		install -m 755 -d $(FONTDIR); \
+		install -m 644 -p fonts/*.ttf $(FONTDIR); \
+	else \
+		install -m 755 -d ~/.fonts; \
+		install -m 644 -p fonts/*.ttf ~/.fonts; \
+	fi
+	@if [ ! -z "`which fc-cache`" ]; then \
+		if [ "`id -u`" -eq 0 ]; then \
+ 			fc-cache -fv $(FONTDIR); \
+		else \
+			fc-cache -fv ~/.fonts; \
+		fi; \
+	else \
+		echo "Don't know how to setup truetype fonts (fc-cache not available)."; \
+		echo "Please contact your system administrator."; \
+	fi
+
+install_engines: engines
+	install -m 755 -d $(SHAREDIR)/engines
+	install -m 755 -d $(SHAREDIR)/engines/phalanx
+	install -m 666 ./engines/phalanx/eco.phalanx $(SHAREDIR)/engines/phalanx
+	install -m 644 ./engines/phalanx/HISTORY $(SHAREDIR)/engines/phalanx
+	install -m 644 ./engines/phalanx/pbook.phalanx $(SHAREDIR)/engines/phalanx
+	install -m 644 ./engines/phalanx/README $(SHAREDIR)/engines/phalanx
+	install ./engines/phalanx/phalanx $(BINDIR)
+	install -m 755 -d $(SHAREDIR)/engines/toga
+	install -m 644 ./engines/toga/copying.txt $(SHAREDIR)/engines/toga
+	install -m 644 ./engines/toga/readme.txt $(SHAREDIR)/engines/toga
+	install ./engines/toga/src/fruit $(BINDIR)
+
+install_gui: scid
+	install -m 755 scid $(BINDIR)
+	scid
+
+uninstall:
+	rm -rf $(SHAREDIR)/engines/phalanx
+	rm -rf $(SHAREDIR)/engines/toga
+	rm -rf $(SHAREDIR)/books
+	rm -rf $(SHAREDIR)/bases
+	rm -rf $(SHAREDIR)/data/
+	rm -f $(SHAREDIR)/spelling.ssp
+	rm -f $(BINDIR)/scid $(BINDIR)/sc_addmove $(BINDIR)/sc_epgn
+	rm -f $(BINDIR)/sc_spell $(BINDIR)/sc_eco $(BINDIR)/sc_import
+	rm -f $(BINDIR)/sc_remote $(BINDIR)/sc_tree $(BINDIR)/scidpgn
+	rm -f $(BINDIR)/pgnfix $(BINDIR)/spliteco
+	rm -f $(BINDIR)/pgnscid $(BINDIR)/tkscid $(BINDIR)/tcscid
+	rm -f $(BINDIR)/scmerge $(BINDIR)/scidlet
+	rm -f $(BINDIR)/phalanx $(BINDIR)/fruit
+	rm -rf $(SHAREDIR)/html
+	rm -rf $(SHAREDIR)/lang
+	rm -rf $(SHAREDIR)/bitmaps
+	@if [ "`id -u`" -eq 0 ]; then \
+		for f in `ls fonts/*.ttf`; do \
+			rm -f $(FONTDIR)/`basename $$f`; \
+		done; \
+		if [ ! -z "`which fc-cache`" ]; then \
+			fc-cache -fv $(FONTDIR); \
+		fi; \
+		if [ "`find $(FONTDIR) -type d -empty`" = "$(FONTDIR)" ]; then \
+			rmdir $(FONTDIR); \
+		fi; \
+	else \
+		for f in `ls fonts/*.ttf`; do \
+			rm -f ~/.$$f; \
+		done; \
+		if [ ! -z "`which fc-cache`" ]; then \
+			fc-cache -fv ~/.fonts; \
+		fi; \
+		if [ "`find ~/.fonts -type d -empty`" = "`ls -d ~/.fonts`" ]; then \
+			rmdir ~/.fonts; \
+		fi; \
+	fi
+
+clean:
+	rm -f game.* tkscid.so tkscid.dll position.* src/*.o src/universalchardet/*.o src/zlib/*.o src/zlib/*.a src/polyglot/*.o src/cql/*.o $(EXECS) scql scid $(SCRIPTS)
+	cd engines/phalanx/ && make clean && cd ../../
+	cd engines/toga/src/ && make clean && cd ../../../
+	cd src/tkdnd/ && make clean && cd ../..
+
+strip:
+	strip $(EXECS)
+
+### To compress scid and executables with gzexe: type "make gzexe".
+
+gzexe:
+	gzexe $(EXECS) scid
+
+
+scid: $(TCLS)
+	rm -f ./scid
+	cat $(TCLS) > ./scid
+	chmod +x scid
+
+### Some of these targets are totally unused, and need sorting out. S.A
+
+sc_addmove: scripts/sc_addmove.tcl
+	cp scripts/sc_addmove.tcl ./sc_addmove
+	chmod +x sc_addmove
+
+sc_epgn: scripts/sc_epgn.tcl
+	cp scripts/sc_epgn.tcl ./sc_epgn
+	chmod +x sc_epgn
+
+sc_spell: scripts/sc_spell.tcl
+	cp scripts/sc_spell.tcl ./sc_spell
+	chmod +x sc_spell
+
+sc_eco: scripts/sc_eco.tcl
+	cp scripts/sc_eco.tcl ./sc_eco
+	chmod +x sc_eco
+
+sc_import: scripts/sc_import.tcl
+	cp scripts/sc_import.tcl ./sc_import
+	chmod +x sc_import
+
+sc_remote: scripts/sc_remote.tk
+	cp scripts/sc_remote.tk ./sc_remote
+	chmod +x sc_remote
+
+sc_tree: scripts/sc_tree.tcl
+	cp scripts/sc_tree.tcl ./sc_tree
+	chmod +x sc_tree
+
+sc_maketree: scripts/sc_maketree.tcl
+	cp scripts/sc_maketree.tcl ./sc_maketree
+	chmod +x sc_maketree
+
+scidpgn: scripts/scidpgn.tcl
+	cp scripts/scidpgn.tcl ./scidpgn
+	chmod +x scidpgn
+
+spliteco: scripts/spliteco.tcl
+	cp scripts/spliteco.tcl ./spliteco
+	chmod +x spliteco
+
+tbstats: scripts/tbstats.tcl
+	cp scripts/tbstats.tcl ./tbstats
+	chmod +x tbstats
+
+wmtest: scripts/wmtest.tk
+	cp scripts/wmtest.tk ./wmtest
+	chmod +x wmtest
+
+pgnfix: scripts/pgnfix.py
+	cp scripts/pgnfix.py ./pgnfix
+	chmod +x pgnfix
+
+eco2pgn: scripts/eco2pgn.py
+	cp scripts/eco2pgn.py ./eco2pgn
+	chmod +x eco2pgn
+
+twic2pgn: scripts/twic2pgn.py
+	cp scripts/twic2pgn.py ./twic2pgn
+	chmod +x twic2pgn
+
+scmerge: src/scmerge.o src/misc.o src/index.o src/date.o src/namebase.o \
+         src/gfile.o src/bytebuf.o src/textbuf.o src/myassert.o \
+         src/stralloc.o src/position.o $(CHARSETCONVOBJS)
+	$(LINK) $(LDFLAGS) -o scmerge src/scmerge.o $(OBJS) $(CHARSETCONVOBJS) $(ZLIB) $(TCL_LIBRARY)
+
+pgnscid: src/pgnscid.o $(OBJS) $(CHARSETCONVOBJS)
+	$(LINK) $(LDFLAGS) -o pgnscid src/pgnscid.o $(OBJS) $(CHARSETCONVOBJS) $(ZLIB) $(TCL_LIBRARY)
+
+scidlet: src/scidlet.o src/engine.o src/recog.o src/misc.o src/position.o \
+         src/dstring.o src/movelist.o src/myassert.o
+	$(LINK) $(LDFLAGS) -o scidlet src/scidlet.o src/engine.o src/recog.o src/misc.o src/position.o src/movelist.o src/dstring.o src/myassert.o
+
+scidt: src/scidt.o $(OBJS) $(CHARSETCONVOBJS)
+	$(LINK) $(LDFLAGS) -o scidt src/scidt.o $(OBJS) $(CHARSETCONVOBJS) $(ZLIB) $(TCL_LIBRARY)
+
+tkscid: src/tkscid.o $(OBJS) $(CQLOBJS_I) $(CHARSETCONVOBJS) \
+        src/tree.o src/filter.o src/pbook.o src/crosstab.o src/spellchk.o \
+        src/probe.o src/optable.o src/engine.o src/recog.o src/tkdnd/TkDND_XDND.o src/tk_selection.o
+	$(LINK) $(LDFLAGS) -o tkscid src/tkscid.o $(OBJS) $(CQLOBJS_I) $(CHARSETCONVOBJS) src/tree.o \
+        src/filter.o src/pbook.o src/crosstab.o src/spellchk.o src/probe.o src/optable.o \
+        src/engine.o src/recog.o src/tkdnd/TkDND_XDND.o src/tk_selection.o $(ZLIB) $(TK_LIBRARY)
+
+tcscid: src/tcscid.o $(OBJS) $(CQLOBJS_I) $(CHARSETCONVOBJS) src/tree.o src/filter.o src/pbook.o src/crosstab.o \
+        src/spellchk.o src/probe.o src/optable.o src/engine.o src/recog.o
+	$(LINK) $(LDFLAGS) -o tcscid src/tcscid.o $(OBJS) $(CQLOBJS_I) $(CHARSETCONVOBJS) src/tree.o src/filter.o src/pbook.o \
+        src/crosstab.o src/spellchk.o src/probe.o src/optable.o src/engine.o src/recog.o $(ZLIB) $(TCL_LIBRARY)
+
+scql: $(CQLOBJS_S) $(CHARSETCONVOBJS)
+	$(LINK) $(LDFLAGS) -o scql $(CQLOBJS_S) $(CHARSETCONVOBJS) $(ZLIB) $(TCL_LIBRARY)
+
+# eco2epd is now optional extra program NOT compiled by default, since
+# scid now reads the .eco file format directly.
+
+eco2epd: src/eco2epd.o $(OBJS) src/pbook.o $(CHARSETCONVOBJS)
+	$(LINK) $(LDFLAGS) -o eco2epd src/eco2epd.o $(OBJS) src/pbook.o $(ZLIB) $(CHARSETCONVOBJS) $(TCL_LIBRARY)
+
+### Rules to create .o files from .cpp files:
+
+src/tcscid.o: src/tkscid.cpp
+	$(BASH_ENV) $(CXX) $(CXXFLAGS) -std=c++11 $(TCL_INCLUDE) -DTCL_ONLY -o src/tcscid.o -c src/tkscid.cpp
+
+src/tkscid.o: src/tkscid.cpp
+	$(BASH_ENV) $(CXX) $(CXXFLAGS) -std=c++11 $(TCL_INCLUDE) -o src/tkscid.o -c src/tkscid.cpp
+
+### The endgame tablebase code in the egtb/ subdirectory (not written by me)
+
+src/probe.o: src/probe.cpp src/egtb/tbindex.cpp src/egtb/tbdecode.c
+	$(CXX) $(CXXFLAGS) -Wno-missing-braces $(TB) -o src/probe.o -c src/probe.cpp
+
+### Generic rule for all other .cpp files:
+
+%.o: %.cpp
+	$(BASH_ENV) $(CXX) $(CXXFLAGS) $(TCL_INCLUDE) -o $@ -c $<
+
+src/cql/s_%.o: src/cql/%.cpp
+	$(BASH_ENV) $(CXX) $(CXXFLAGS) -std=c++11 -Wall -Wno-write-strings -Wno-char-subscripts  -Wno-parentheses -Wno-sign-compare -fdiagnostics-show-option -DSTANDALONE $(CQL_INCLUDE) $(TCL_INCLUDE) -o $@ -c $<
+
+src/cql/i_%.o: src/cql/%.cpp
+	$(BASH_ENV) $(CXX) $(CXXFLAGS) -std=c++11 -Wall -Wno-write-strings -Wno-char-subscripts  -Wno-parentheses -Wno-sign-compare -fdiagnostics-show-option -DINTEGRATED $(CQL_INCLUDE) $(TCL_INCLUDE) -o $@ -c $<
+
+
+### Rule for compiling zlib source files:
+
+src/zlib/%.o: src/zlib/%.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+src/tkdnd/TkDND_XDND.o: src/tkdnd/unix/TkDND_XDND.c
+	$(BASH_ENV) $(MAKE) -C src/tkdnd/ -f Makefile CC="$(CC)" LINK="$(LINK)" CFLAGS="$(CFLAGS)" \
+	       LDFLAGS="$(LDFLAGS)" TCL_VERSION="$(TCL_VERSION)" TCL_INCLUDE="$(TCL_INCLUDE)" \
+	       TCL_LIBRARY="$(TCL_LIBRARY)" TK_INCLUDE="$(TK_INCLUDE)" TK_LIBRARY="$(TK_LIBRARY)"
+
+### End of Makefile

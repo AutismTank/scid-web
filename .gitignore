@@ -1,54 +1,36 @@
-*.o
-*.a
-*.lo
-*.la
-*.so
-*.obj
-*.d
-Makefile
-Makefile.bak
+# SCID databases and generated data
+/data/
 
-*~
-*.swp
-*.swo
-\#*\#
-.\#*
-*.patch
-
-engines/phalanx/phalanx
-engines/phalanx-scid/phalanx-scid
-engines/toga/src/.depend
-engines/toga/src/a.out
-engines/toga/src/fruit
-engines/togaII1.2.1a/src/.depend
-engines/togaII1.2.1a/src/togaII
-pgnfix
-pgnscid
-sc_addmove
-sc_eco
-sc_epgn
-sc_import
-sc_remote
-sc_spell
-sc_tree
-scid
-scidlet
-scidpgn
-scidt
-scmerge
-spf2spi
-spliteco
-tcl/sharedir.tcl
-tcscid
-tkscid
-
-web/api/.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
 
-data/*.si4
-data/*.si3
-data/*.sg4
-data/*.sn4
-data/*.sg3
-data/*.sn3
+# Local backups
+*.backup
+*.backup-*
+*.before-*
+*.broken-backup
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# SCID build artifacts
+*.o
+/scid
+/tcscid
+/pgnscid
+/scidpgn
+/sc_remote
+/tcl/sharedir.tcl

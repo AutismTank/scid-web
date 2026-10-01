@@ -1,0 +1,4 @@
+web/api/.venv
+__pycache__
+*.pyc
+.git
